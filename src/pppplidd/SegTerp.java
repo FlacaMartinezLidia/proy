@@ -2,8 +2,10 @@ package pppplidd;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -11,6 +13,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -265,10 +269,456 @@ public class SegTerp {
         
         
     }//fin 2 if
+if(elecion ==3){
+        try {
+            sc=new Scanner(System.in);
+            //archivo antigup
+            FileInputStream fis = new FileInputStream("db.dat");
+            DataInputStream entrada = new DataInputStream(fis);
+            
+            //nuevo archivo
+            FileOutputStream fisN = new FileOutputStream("x.dat");
+            DataOutputStream salida = new DataOutputStream(fisN); 
+            
+            System.out.println("Ingrese el contenido del primer atributo");
+            System.out.println("del registro a eliminar");
+            
+            String key=sc.nextLine();
+            
+
+            Boolean x =true;
+            
+            while(x==true){
+                try{
+                    String tipo=entrada.readUTF();    
+                    String nm=entrada.readUTF();    
+                    
+                    if(tipo.compareToIgnoreCase("String")==0){
+                         String n1=entrada.readUTF();
+                         
+                         
+                         if(key.compareToIgnoreCase(n1)==0){
+                            
+                             try{
+                                
+                            FileReader lector=new FileReader("definicion.txt");
+                            BufferedReader contenido=new BufferedReader(lector);
+                            contenido.readLine();
+                            contenido.readLine();
+                            contenido.readLine();
+                            contenido.readLine();
+                            System.out.println("registro con el atributo "+n1+" eliminado.");
+                            while(contenido.readLine()!=null){
+                                
+                            String tipe=contenido.readLine();
+                            contenido.readLine();
+                                if(tipe.compareToIgnoreCase("String")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                }
+                                if(tipe.compareToIgnoreCase("Integer")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readInt();
+                                }
+                                if(tipe.compareToIgnoreCase("Date")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readInt();
+                                    entrada.readInt();
+                                    entrada.readInt();
+                                }
+                                if(tipe.compareToIgnoreCase("Long")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readLong();
+                                }
+                                if(tipe.compareToIgnoreCase("Double")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readDouble();
+                                }
+                            }
+                            
+                            
+                            
+                            
+                            //lector.close();
+                            //contenido.close();
+                            
+                            }catch(Exception e){
+                                 
+                                System.out.println("error ciclo");
+                            }
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeUTF(n1);
+                         }
+                         
+                         
+                    }
+        
+                    if(tipo.compareToIgnoreCase("Integer")==0){
+                        int n2=entrada.readInt();
+                         
+                         
+                         if(key.compareToIgnoreCase(nm)==0){
+                             System.out.println("registro con el atributo "+nm+" eliminado.");
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeInt(n2);
+                         }
+                         
+                         
+                    }
+        
+                    if(tipo.compareToIgnoreCase("Date")==0){
+                        int anio=entrada.readInt();
+                        int mes=entrada.readInt();
+                        int dia=entrada.readInt();
+                         
+                         
+                         if(key.compareToIgnoreCase(nm)==0){
+                             System.out.println("registro con el atributo "+nm+" eliminado.");
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeInt(anio);
+                             salida.writeInt(mes);
+                             salida.writeInt(dia);
+                         }
+                         
+                         
+
+           
+                    } 
+                    if(tipo.compareToIgnoreCase("Long")==0){
+                        long dato=entrada.readLong();
+                         
+                         
+                         if(key.compareToIgnoreCase(nm)==0){
+                             System.out.println("registro con el atributo "+nm+" eliminado.");
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeLong(dato);
+                         }
+                         
+                         
+                    }
+                    if(tipo.compareToIgnoreCase("Double")==0){
+                        double dato=entrada.readDouble();
+                        
+                         
+                         if(key.compareToIgnoreCase(nm)==0){
+                             System.out.println("registro con el atributo "+nm+" eliminado.");
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeDouble(dato);
+                         }
+                         
+                         
+                    }
+                    
+                
+                }catch(EOFException e){
+                    e.printStackTrace();
+                    x=false;
+                }
+            
+            }
+            
+            
+        fis.close();
+                entrada.close();
+                fisN.close();
+                salida.close();
+                
+                File nuevo=new File("x.dat");
+                File viejo=new File("db.dat");
+                
+                if(viejo.delete()==true){
+                    System.out.println("eliminado");
+                }else{
+                    System.out.println("NO eliminado");
+                }
+                
+                nuevo.renameTo(viejo);
+                
+                
+                    
+            
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(SegTerp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(SegTerp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//fin if 3       
+    
+
+
+    if(elecion ==4){
+        try {
+            sc=new Scanner(System.in);
+            //archivo antigup
+            FileInputStream fis = new FileInputStream("db.dat");
+            DataInputStream entrada = new DataInputStream(fis);
+            
+            //nuevo archivo
+            FileOutputStream fisN = new FileOutputStream("x.dat");
+            DataOutputStream salida = new DataOutputStream(fisN); 
+            
+            System.out.println("Ingrese el contenido del primer atributo");
+            System.out.println("del registro a modificar");
+            
+            String key=sc.nextLine();
+            
+
+            Boolean x =true;
+            
+            while(x==true){
+                try{
+                    String tipo=entrada.readUTF();    
+                    String nm=entrada.readUTF();    
+                    
+                    if(tipo.compareToIgnoreCase("String")==0){
+                         String n1=entrada.readUTF();
+                         
+                         
+                         if(key.compareToIgnoreCase(n1)==0){
+                             
+                             /////////////////////////////////////////////////
+                             
+                              try{
+                                
+                            FileReader lector=new FileReader("definicion.txt");
+                            BufferedReader contenido=new BufferedReader(lector);
+                            contenido.readLine();
+                            contenido.readLine();
+                            contenido.readLine();
+                            contenido.readLine();
+                            salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeUTF(n1);
+                             
+                            //System.out.println("registro con el atributo "+n1+" eliminado.");
+                            String nombreD="";
+                            while((nombreD=contenido.readLine())!=null){
+                                
+                            String tipe=contenido.readLine();
+                            
+                            String lOng=contenido.readLine();
+                                if(tipe.compareToIgnoreCase("String")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    
+                                    System.out.println("ingrese nuevo "+nombreD+" del tipo "+tipe);
+                                    String data=sc.nextLine();
+                                    
+                                    salida.writeUTF(nombreD);
+                                    salida.writeUTF(tipe);
+                                    salida.writeUTF(data);
+                                }
+                                if(tipe.compareToIgnoreCase("Integer")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readInt();
+                                    
+                                    
+                                    System.out.println("ingrese nuevo "+nombreD+" del tipo "+tipe);
+                                    int data=sc.nextInt();
+                                    
+                                    salida.writeUTF(nombreD);
+                                    salida.writeUTF(tipe);
+                                    salida.writeInt(data);
+                                }
+                                if(tipe.compareToIgnoreCase("Date")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readInt();
+                                    entrada.readInt();
+                                    entrada.readInt();
+                                    
+                                    
+                                    System.out.println("ingrese nuevo "+nombreD+" del tipo "+tipe);
+                                    System.out.println("ingrese anio");
+                                    int anio=sc.nextInt();
+                                    System.out.println("ingrese mes");
+                                    int mes=sc.nextInt();
+                                    System.out.println("ingrese dia");
+                                    int dia=sc.nextInt();
+                                    
+                                    salida.writeUTF(nombreD);
+                                    salida.writeUTF(tipe);
+                                    salida.writeInt(anio);
+                                    salida.writeInt(mes);
+                                    salida.writeInt(dia);
+                                    
+                                }
+                                if(tipe.compareToIgnoreCase("Long")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readLong();
+                                    
+                                     
+                                    System.out.println("ingrese nuevo "+nombreD+" del tipo "+tipe);
+                                    Long data=sc.nextLong();
+                                    
+                                    salida.writeUTF(nombreD);
+                                    salida.writeUTF(tipe);
+                                    salida.writeLong(data);
+                                }
+                                if(tipe.compareToIgnoreCase("Double")==0){
+                                    entrada.readUTF();
+                                    entrada.readUTF();
+                                    entrada.readDouble();
+                                    
+                                     
+                                    System.out.println("ingrese nuevo "+nombreD+" del tipo "+tipe);
+                                    double data=sc.nextDouble();
+                                    
+                                    salida.writeUTF(nombreD);
+                                    salida.writeUTF(tipe);
+                                    salida.writeDouble(data);
+                                }
+                            }
+                            
+                            
+                            
+                            
+                            lector.close();
+                            contenido.close();
+                            
+                            }catch(Exception e){
+                                 
+                                System.out.println("error ciclo");
+                            }
+                            //fin modificar
+                             
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeUTF(n1);
+                         }
+                         
+                         
+                    }
+        
+                    if(tipo.compareToIgnoreCase("Integer")==0){
+                        int n2=entrada.readInt();
+                         
+                         
+                         if(key.compareToIgnoreCase(nm)==0){
+                             System.out.println("registro con el atributo "+nm+" eliminado.");
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeInt(n2);
+                         }
+                         
+                         
+                    }
+        
+                    if(tipo.compareToIgnoreCase("Date")==0){
+                        int anio=entrada.readInt();
+                        int mes=entrada.readInt();
+                        int dia=entrada.readInt();
+                         
+                         
+                         if(key.compareToIgnoreCase(nm)==0){
+                             System.out.println("registro con el atributo "+nm+" eliminado.");
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeInt(anio);
+                             salida.writeInt(mes);
+                             salida.writeInt(dia);
+                         }
+                         
+                         
+
+           
+                    } 
+                    if(tipo.compareToIgnoreCase("Long")==0){
+                        long dato=entrada.readLong();
+                         
+                         
+                         if(key.compareToIgnoreCase(nm)==0){
+                             System.out.println("registro con el atributo "+nm+" eliminado.");
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeLong(dato);
+                         }
+                         
+                         
+                    }
+                    if(tipo.compareToIgnoreCase("Double")==0){
+                        double dato=entrada.readDouble();
+                        
+                         
+                         if(key.compareToIgnoreCase(nm)==0){
+                             System.out.println("registro con el atributo "+nm+" eliminado.");
+                         }else{
+                             salida.writeUTF(tipo);
+                             salida.writeUTF(nm);
+                             salida.writeDouble(dato);
+                         }
+                         
+                         
+                    }
+                    
+                
+                }catch(EOFException e){
+                    e.printStackTrace();
+                    x=false;
+                }
+            
+            }
+            
+            
+        fis.close();
+                entrada.close();
+                fisN.close();
+                salida.close();
+                
+                File nuevo=new File("x.dat");
+                File viejo=new File("db.dat");
+                
+                if(viejo.delete()==true){
+                    System.out.println("eliminado");
+                }else{
+                    System.out.println("NO eliminado");
+                }
+                
+                nuevo.renameTo(viejo);
+                
+                
+                    
+            
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(SegTerp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(SegTerp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    //fin if 4
+
         
     System.out.println("desea salir del programa?");
     System.out.println("1)si");
-    System.out.println("0)no");
+    System.out.println("2)no");
 
     int f =sc.nextInt();
         
